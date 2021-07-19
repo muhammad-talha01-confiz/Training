@@ -5,9 +5,24 @@ import java.text.ParseException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-public class Main implements Runnable{
+public class Read_Write_CSV implements Runnable{
+
+    Thread myThread;
+    String threadName;
+
+    Read_Write_CSV(String name){
+        threadName = name;
+    }
 
     public void run() {}
+
+    public void start() {
+        System.out.println("Thread Started");
+        if (myThread == null) {
+            myThread = new Thread(this, threadName);
+            myThread.start();
+        }
+    }
 
     private static final HashSet<String> allCities = new HashSet<>();
 
@@ -24,8 +39,7 @@ public class Main implements Runnable{
     private static List<Candidate> readCandidatesFromCSV(String filePath) {
         List<Candidate> candidates= new ArrayList<>();
 
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filePath));
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))){
 
             br.readLine();
             String line = br.readLine();
@@ -61,7 +75,6 @@ public class Main implements Runnable{
         String dateString = dataFromCSVLine[5];
         Date date = new SimpleDateFormat("dd/MM/yy").parse(dateString);
 
-
         return new Candidate(id, name, gender, age, city, date);
     }
 
@@ -69,7 +82,6 @@ public class Main implements Runnable{
     private static void separateCities(List<Candidate> candidates)
     {
         for(String cityName : allCities){
-            System.out.println(cityName);
             writeToCSV(candidates, cityName);
         }
     }
