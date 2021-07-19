@@ -4,25 +4,9 @@ import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.*;
 
-public class Read_Write_CSV implements Runnable{
-
-    Thread myThread;
-    String threadName;
-
-    Read_Write_CSV(String name){
-        threadName = name;
-    }
-
-    public void run() {}
-
-    public void start() {
-        System.out.println("Thread Started");
-        if (myThread == null) {
-            myThread = new Thread(this, threadName);
-            myThread.start();
-        }
-    }
+public class Read_Write_CSV {
 
     private static final HashSet<String> allCities = new HashSet<>();
 
@@ -33,7 +17,12 @@ public class Read_Write_CSV implements Runnable{
 
         candidates.sort(Comparator.comparing(Candidate::getCity));
 
-        separateCities(candidates);
+        try {
+            separateCities(candidates);
+        }
+        catch (InterruptedException ie) {
+            ie.printStackTrace();
+        }
     }
 
     private static List<Candidate> readCandidatesFromCSV(String filePath) {
@@ -79,16 +68,18 @@ public class Read_Write_CSV implements Runnable{
     }
 
 
-    private static void separateCities(List<Candidate> candidates)
-    {
-        for(String cityName : allCities){
-            writeToCSV(candidates, cityName);
+    private static void separateCities(List<Candidate> candidates) throws InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(allCities.size());
+
+        for (String City : allCities) {
+            Runnable runnableTask = () -> writeToCSV(candidates, City);
+            executor.execute(runnableTask);
         }
+
+        executor.shutdown();
     }
 
     private static void writeToCSV(List<Candidate> candidates, String cityName) {
-
-        List<Candidate> written = new ArrayList<>();
 
         try (FileWriter csvWriter = new FileWriter(cityName + "-data.csv")) {
             csvWriter.append("id, Name, Gender, Age, City, DOB");
@@ -98,13 +89,11 @@ public class Read_Write_CSV implements Runnable{
                 if (c.getCity().equals(cityName)) {
                     csvWriter.append(c.toString());
                     csvWriter.append("\n");
-                    written.add(c);
                 }
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-        candidates.removeAll(written);
     }
 }
 

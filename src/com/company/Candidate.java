@@ -1,17 +1,16 @@
 package com.company;
 
-//import java.text.SimpleDateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Candidate {
     // CSV Format: ID, Name, Gender, Age, City, DOB
-    private int id;
-    private String name;
-    private char gender;
-    private int age;
-    private String city;
-    private Date dob;
+    private final int id;
+    private final String name;
+    private final char gender;
+    private final int age;
+    private final String city;
+    private final Date dob;
 
     public Candidate(int id, String name, char gender, int age, String city, Date dob) {
         this.id = id;
@@ -22,52 +21,8 @@ public class Candidate {
         this.dob = dob;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void  setGender(char gender) {
-        this.gender = gender;
-    }
-
-    public char getGender() {
-        return gender;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public String getCity() {
         return city;
-    }
-
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
-
-    public Date getDob() {
-        return dob;
     }
 
     public String toString(){
